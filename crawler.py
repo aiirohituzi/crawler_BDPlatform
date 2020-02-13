@@ -3,10 +3,16 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import json
 import xlsxwriter
-import config
-import config_request
+from selenium.webdriver.common.alert import Alert
+import re
 
-workbook = xlsxwriter.Workbook('request.xlsx')
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+# import config
+# import config_request
+
+workbook = xlsxwriter.Workbook('kdx_1~500.xlsx')
 worksheet = workbook.add_worksheet()
 
 chrome_options = Options()
@@ -16,178 +22,126 @@ driver = webdriver.Chrome('./chromedriver/chromedriver', chrome_options=chrome_o
 
 data = []
 
-#==================================Quest==================================================================
-# for num in config.QUESTNUM_G:
+# for num in config_request.REQUEST_NUM:
 #     print(num)
-#     driver.get('http://wiki.mhxg.org/ida/' + num + '.html')
+#     driver.get('https://kdx.kr/data/view?product_id=3181')
 #     html = driver.page_source
 #     soup = BeautifulSoup(html, 'html.parser')
 
-#     # questName = soup.select(
-#     #     '#quest' + num + ' > div > div.panel-heading > a:nth-of-type(2)'
-#     # )
-    
-#     # questMap = soup.select(
-#     #     '#quest' + num + ' > div > div.panel-body.view_panel_body.a_cl21913' + str(i) + ' > a'
-#     # )
-
-#     questName = soup.select(
-#         '#id' + num + ' > td'
+#     requestName = soup.select(
+#         '#id' + num + ' > td.b > a'
 #     )
 
-#     rating = soup.select(
-#         '#main_1 > div > div.row_x > div.col-md-10 > h3'
+#     condition = soup.select(
+#         '#id' + num + ' > td:nth-of-type(2)'
+#         #id313290 > td:nth-child(2)
 #     )
 
-#     questMap = soup.select(
-#         '#main_1 > div > div.row_x > div.col-md-10 > table:nth-of-type(2) > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > a'
+#     reward = soup.select(
+#         '#id' + num + ' > td:nth-of-type(3)'
 #     )
 
-#     questTime = soup.select(
-#         '#main_1 > div > div.row_x > div.col-md-10 > table:nth-of-type(2) > tbody > tr:nth-of-type(1) > td:nth-of-type(3)'
-#     )
-
-#     condition_main = soup.select(
-#         '#main_1 > div > div.row_x > div.col-md-10 > div > table:nth-of-type(1) > tbody > tr:nth-of-type(1) > td:nth-of-type(1)'
-#     )
-
-#     condition_sub = soup.select(
-#         '#main_1 > div > div.row_x > div.col-md-10 > div > table:nth-of-type(1) > tbody > tr:nth-of-type(1) > td:nth-of-type(2)'
-#     )
-
-#     down_payment = soup.select(
-#         '#main_1 > div > div.row_x > div.col-md-10 > table:nth-of-type(2) > tbody > tr:nth-of-type(2) > td:nth-of-type(3)'
-#     )
-
-#     rewardMoney_main = soup.select(
-#         '#main_1 > div > div.row_x > div.col-md-10 > table:nth-of-type(2) > tbody > tr:nth-of-type(2) > td:nth-of-type(1)'
-#     )
-
-#     rewardMoney_sub = soup.select(
-#         '#main_1 > div > div.row_x > div.col-md-10 > table:nth-of-type(2) > tbody > tr:nth-of-type(2) > td:nth-of-type(2)'
-#     )
-
-#     # print(questName)
-#     # print(questMap)
-#     # print(questTime)
-#     # print(condition_main)
-#     # print(condition_sub)
-#     # print(down_payment)
-#     # print(rewardMoney_main)
-#     # print(rewardMoney_sub)
-#     # print('--------------')
+#     print('requestName : ' + requestName[0].text)
+#     print('condition : ' + condition[0].text.rstrip().lstrip())
+#     print('reward : ' + reward[0].text.rstrip().lstrip())
 
 #     data.append({
-#         'questName': questName[0].text.replace("\n", "").rstrip().lstrip(),
-#         'rating': rating[0].text.replace(questName[0].text.replace("\n", "").rstrip().lstrip(), ""),
-#         'questMap' : questMap[0].text,
-#         'questTime' : questTime[0].text,
-#         'condition_main' : condition_main[0].text,
-#         'condition_sub' : condition_sub[0].text,
-#         'down_payment' : down_payment[0].text,
-#         'rewardMoney_main' : rewardMoney_main[0].text,
-#         'rewardMoney_sub' : rewardMoney_sub[0].text,
+#         'requestName': requestName[0].text,
+#         'condition': condition[0].text.rstrip().lstrip(),
+#         'reward': reward[0].text.rstrip().lstrip(),
 #     })
-#=======================================================================================================================
 
 
+for num in range(1, 501):
+    driver.get(f'https://kdx.kr/data/view?product_id={num}')
 
-#=======================================Kariwaza========================================================================
-# temp_category = ''
-# temp_name = ''
-# # config.KARIWAZA_NUM.sort()
-# for num in config.KARIWAZA_NUM:
-#     print(num)
-#     driver.get('http://wiki.mhxg.org/data/1847.html')
-#     html = driver.page_source
-#     soup = BeautifulSoup(html, 'html.parser')
+    try:
+        WebDriverWait(driver, 1).until(EC.alert_is_present())
+        Alert(driver).accept()
+        print(f'id:{num} 에러')
+        continue
+    except TimeoutException:
+        print(f'id:{num} 크롤링')
+        # print("Alert not found. Move on...")
 
-#     if num in config.KARIWAZA_NUM_HEAD:
-#         category = soup.select(
-#             '#id' + num + ' > td:nth-of-type(1)'
-#         )
-#         temp_category = category[0].text.replace("\n", "").rstrip().lstrip()
-
-#         kariwazaName = soup.select(
-#             '#id' + num + ' > td:nth-of-type(2)'
-#         )
-#         temp_name = kariwazaName[0].text.replace("\n", "").rstrip().lstrip()
-
-#         level = soup.select(
-#             '#id' + num + ' > td.c_g.b'
-#         )
-        
-#         condition = soup.select(
-#             '#id' + num + ' > td:nth-of-type(4)'
-#         )
-#     else:
-#         if num in config.KARIWAZA_NUM_LV1:
-#             kariwazaName = soup.select(
-#                 '#id' + num + ' > td:nth-of-type(1)'
-#             )
-#             temp_name = kariwazaName[0].text.replace("\n", "").rstrip().lstrip()
-
-#             level = soup.select(
-#                 '#id' + num + ' > td.c_g.b'
-#             )
-            
-#             condition = soup.select(
-#                 '#id' + num + ' > td:nth-of-type(3)'
-#             )
-#         else:
-#             level = soup.select(
-#                 '#id' + num + ' > td.c_g.b'
-#             )
-            
-#             condition = soup.select(
-#                 '#id' + num + ' > td:nth-of-type(2)'
-#             )
-
-
-#     print('category : ' + temp_category)
-#     print('name : ' + temp_name)
-#     print('lv : ' + level[0].text.replace("\n", "").rstrip().lstrip())
-#     print('con : ' + condition[0].text)
-
-#     data.append({
-#         'category': temp_category,
-#         'kariwazaName': temp_name,
-#         'level': level[0].text.replace("\n", "").rstrip().lstrip(),
-#         'condition' : condition[0].text,
-#     })
-#=============================================================================================================
-
-#=================================================Request=====================================================
-for num in config_request.REQUEST_NUM:
-    print(num)
-    driver.get('http://wiki.mhxg.org/data/2824.html')
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
 
-    requestName = soup.select(
-        '#id' + num + ' > td.b > a'
+    data_set_name = soup.select(
+        '#dataView > div.wrapper.w1000 > div > div.flex.sb.top > div.right_info > div.flex.sb.top > div.title'
     )
-
-    condition = soup.select(
-        '#id' + num + ' > td:nth-of-type(2)'
-        #id313290 > td:nth-child(2)
+    data_descript = soup.select(
+      '#dataView > div.wrapper.w1000 > div > div.desc_wrap > div > table > tbody > tr:nth-child(1) > td'
     )
-
-    reward = soup.select(
-        '#id' + num + ' > td:nth-of-type(3)'
+    company = soup.select(
+      '#dataView > div.wrapper.w1000 > div > div.flex.sb.top > div.right_info > div.company.flex.fs > div.value'
     )
+    price = soup.select(
+      '#dataView > div.wrapper.w1000 > div > div.flex.sb.top > div.right_info > div.price.flex.fs > div.value'
+    )
+    file_list = soup.select(
+        '#dataView > div.wrapper.w1000 > div > div.desc_wrap > div > table > tbody > tr:nth-child(2) > td'
+    )
+    name = data_set_name[0].text.split('] ')
+    
+    # print(f'[{num}]데이터명 : {name[1]}')
+    # print(f'[{num}]데이터설명 : {data_descript[0].text}')
+    # print(f'[{num}]제공자 : {company[0].text}')
+    # print(f'[{num}]데이터 분류1 : {name[0][1:]}')
+    # print(f'[{num}]가격 : {price[0].text}')
+    is_free = ''
+    if price[0].text == "FREE":
+        is_free = "무료"
+    else:
+        is_free = "유료"
+    # print(f'[{num}]유/무료 : {is_free}')
+    # print(f'URL : https://kdx.kr/data/view?product_id={num}')
+    # for row in file_list:
+    #     print(f'파일리스트 : {row.text}')
 
-    print('requestName : ' + requestName[0].text)
-    print('condition : ' + condition[0].text.rstrip().lstrip())
-    print('reward : ' + reward[0].text.rstrip().lstrip())
+    capa_list = re.findall(r"\(([A-Za-z0-9_]+)\)", file_list[0].text)
+    capa_kb = 0
+    capa_mb = 0
+    capa_gb = 0
+    for item in capa_list:
+        if re.search(r"KB", item):
+            capa_kb += int(re.match(r"[0-9]+", item)[0])
+        if re.search(r"MB", item):
+            capa_mb += int(re.match(r"[0-9]+", item)[0])
+        if re.search(r"GB", item):
+            capa_gb += int(re.match(r"[0-9]+", item)[0])
+    # print(capa_kb, capa_mb, capa_gb)
+    capa_str = ''
+    if capa_gb != 0:
+        capa_str += str(capa_gb) + "GB "
+    if capa_mb != 0:
+        capa_str += str(capa_mb) + "MB "
+    if capa_kb != 0:
+        capa_str += str(capa_kb) + "KB"
+
+    is_download = "미제공"
+    file_name = ['',]
+    if re.search(r"[.]csv|[.]zip", file_list[0].text):
+        is_download = "제공"
+        file_name = re.findall(r"[A-Za-z0-9_]+[.]csv|[A-Za-z0-9_]+[.]zip", file_list[0].text)
+        # print(file_name[0])
+
+    
+        
+
 
     data.append({
-        'requestName': requestName[0].text,
-        'condition': condition[0].text.rstrip().lstrip(),
-        'reward': reward[0].text.rstrip().lstrip(),
+        'name': name[1],
+        'descript': data_descript[0].text,
+        'company': company[0].text,
+        'category': name[0][1:],
+        'price': price[0].text,
+        'url': f'https://kdx.kr/data/view?product_id={num}',
+        'capacity': capa_str.rstrip(),
+        'is_free': is_free,
+        'is_download': is_download,
+        'file_name': file_name[0]
     })
-#=============================================================================================================
-
 
 
 driver.close()
@@ -196,74 +150,33 @@ driver.close()
 
 
 
-# f = open("data.txt", 'w', encoding='utf8')
-
-# for q in data:
-#     print(q.get('questName'))
-#     print(q.get('questMap'))
-#     f.write(q.get('questName') + ' / ' + q.get('questMap') + '\n')
-# f.close()
-
-
-# worksheet.write('A1', 'questName')
-# worksheet.write('B1', 'rating')
-# worksheet.write('C1', 'questMap')
-# worksheet.write('D1', 'questTime')
-# worksheet.write('E1', 'condition_main')
-# worksheet.write('F1', 'condition_sub')
-# worksheet.write('G1', 'down_payment')
-# worksheet.write('H1', 'rewardMoney_main')
-# worksheet.write('I1', 'rewardMoney_sub')
-
-# row = 1
-# col = 0
-
-# for a in (data):
-#     worksheet.write(row, col, a.get('questName'))
-#     worksheet.write(row, col + 1, a.get('rating'))
-#     worksheet.write(row, col + 2, a.get('questMap'))
-#     worksheet.write(row, col + 3, a.get('questTime'))
-#     worksheet.write(row, col + 4, a.get('condition_main'))
-#     worksheet.write(row, col + 5, a.get('condition_sub'))
-#     worksheet.write(row, col + 6, a.get('down_payment'))
-#     worksheet.write(row, col + 7, a.get('rewardMoney_main'))
-#     worksheet.write(row, col + 8, a.get('rewardMoney_sub'))
-#     row += 1
-
-
-
-# worksheet.write('A1', 'category')
-# worksheet.write('B1', 'kariwazaName')
-# worksheet.write('C1', 'level')
-# worksheet.write('D1', 'condition')
-
-# row = 1
-# col = 0
-
-# for a in (data):
-#     print(a)
-#     worksheet.write(row, col, a.get('category'))
-#     worksheet.write(row, col + 1, a.get('kariwazaName'))
-#     worksheet.write(row, col + 2, a.get('level'))
-#     worksheet.write(row, col + 3, a.get('condition'))
-#     row += 1
-
-
-
-worksheet.write('A1', 'requestName')
-worksheet.write('B1', 'condition')
-worksheet.write('C1', 'reward')
+worksheet.write('A1', '데이터셋명')
+worksheet.write('B1', '데이터설명')
+worksheet.write('C1', '제공자')
+worksheet.write('D1', '데이터 분류1')
+worksheet.write('E1', '가격')
+worksheet.write('F1', '출처')
+worksheet.write('G1', '용량')
+worksheet.write('H1', '유료/무료')
+worksheet.write('I1', '다운로드 제공여부')
+worksheet.write('J1', '파일명')
 
 row = 1
 col = 0
 
 for a in (data):
-    print(a)
-    worksheet.write(row, col, a.get('requestName'))
-    worksheet.write(row, col + 1, a.get('condition'))
-    worksheet.write(row, col + 2, a.get('reward'))
+    # print(a)
+    worksheet.write(row, col, a.get('name'))
+    worksheet.write(row, col + 1, a.get('descript'))
+    worksheet.write(row, col + 2, a.get('company'))
+    worksheet.write(row, col + 3, a.get('category'))
+    worksheet.write(row, col + 4, a.get('price'))
+    worksheet.write(row, col + 5, a.get('url'))
+    worksheet.write(row, col + 6, a.get('capacity'))
+    worksheet.write(row, col + 7, a.get('is_free'))
+    worksheet.write(row, col + 8, a.get('is_download'))
+    worksheet.write(row, col + 8, a.get('file_name'))
     row += 1
-
 
 
 workbook.close()
