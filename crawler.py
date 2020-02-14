@@ -12,7 +12,7 @@ from selenium.common.exceptions import TimeoutException
 # import config
 # import config_request
 
-workbook = xlsxwriter.Workbook('kdx_1~500.xlsx')
+workbook = xlsxwriter.Workbook('kdx_3001~3500.xlsx')
 worksheet = workbook.add_worksheet()
 
 chrome_options = Options()
@@ -22,37 +22,7 @@ driver = webdriver.Chrome('./chromedriver/chromedriver', chrome_options=chrome_o
 
 data = []
 
-# for num in config_request.REQUEST_NUM:
-#     print(num)
-#     driver.get('https://kdx.kr/data/view?product_id=3181')
-#     html = driver.page_source
-#     soup = BeautifulSoup(html, 'html.parser')
-
-#     requestName = soup.select(
-#         '#id' + num + ' > td.b > a'
-#     )
-
-#     condition = soup.select(
-#         '#id' + num + ' > td:nth-of-type(2)'
-#         #id313290 > td:nth-child(2)
-#     )
-
-#     reward = soup.select(
-#         '#id' + num + ' > td:nth-of-type(3)'
-#     )
-
-#     print('requestName : ' + requestName[0].text)
-#     print('condition : ' + condition[0].text.rstrip().lstrip())
-#     print('reward : ' + reward[0].text.rstrip().lstrip())
-
-#     data.append({
-#         'requestName': requestName[0].text,
-#         'condition': condition[0].text.rstrip().lstrip(),
-#         'reward': reward[0].text.rstrip().lstrip(),
-#     })
-
-
-for num in range(1, 501):
+for num in range(3001, 3182):
     driver.get(f'https://kdx.kr/data/view?product_id={num}')
 
     try:
@@ -120,15 +90,16 @@ for num in range(1, 501):
         capa_str += str(capa_kb) + "KB"
 
     is_download = "미제공"
-    file_name = ['',]
+    file_name = ''
     if re.search(r"[.]csv|[.]zip", file_list[0].text):
         is_download = "제공"
-        file_name = re.findall(r"[A-Za-z0-9_]+[.]csv|[A-Za-z0-9_]+[.]zip", file_list[0].text)
-        # print(file_name[0])
-
-    
-        
-
+        if re.search(r"[ ㄱ-ㅣ가-힣A-Za-z0-9__\[\]]+[.]csv|[ ㄱ-ㅣ가-힣A-Za-z0-9_\[\]]+[.]zip", file_list[0].text):
+            file_name_set = re.findall(r"[ ㄱ-ㅣ가-힣A-Za-z0-9__\[\]]+[.]csv|[ ㄱ-ㅣ가-힣A-Za-z0-9_\[\]]+[.]zip", file_list[0].text)
+            file_name = file_name_set[0].lstrip()
+            # print(file_name)
+        else:
+            file_name = "파일명 패턴 예외"
+            
 
     data.append({
         'name': name[1],
@@ -140,7 +111,7 @@ for num in range(1, 501):
         'capacity': capa_str.rstrip(),
         'is_free': is_free,
         'is_download': is_download,
-        'file_name': file_name[0]
+        'file_name': file_name
     })
 
 
@@ -175,7 +146,7 @@ for a in (data):
     worksheet.write(row, col + 6, a.get('capacity'))
     worksheet.write(row, col + 7, a.get('is_free'))
     worksheet.write(row, col + 8, a.get('is_download'))
-    worksheet.write(row, col + 8, a.get('file_name'))
+    worksheet.write(row, col + 9, a.get('file_name'))
     row += 1
 
 
