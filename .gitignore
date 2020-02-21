@@ -2,3 +2,9 @@ env/
 chromedriver/
 .vscode/
 *.xlsx
+config.py
+nonsan/
+nonsan-6s/
+nonsan-7s/
+__pycache__/
+*.png
