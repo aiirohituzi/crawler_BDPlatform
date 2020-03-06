@@ -1,7 +1,9 @@
 bs4 (BeautifulSoup)
 selenium (webdriver)
 xlsxwriter (excel)
+Pillow (image capture)
 
 pip install bs4
 pip install selenium
 pip install XlsxWriter
+pip install Pillow
