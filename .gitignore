@@ -3,8 +3,13 @@ chromedriver/
 .vscode/
 *.xlsx
 config.py
+config_EW.py
 nonsan/
 nonsan-6s/
 nonsan-7s/
+sigungu_EW/
+EW_V2_/
+img/
 __pycache__/
 *.png
+*.zip

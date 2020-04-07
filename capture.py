@@ -11,7 +11,8 @@ import config
 # id, pw 값은 별개로 config.py 들어가서 일일히 직접 수정해주어야 함
 # 논산, 광명, 금산은 메뉴항목이 다르므로 우선순위 나중에
 # local 명칭으로 폴더 하나 만들어 줘야 함
-local = 'kangwon'
+local = 'daegu'
+menu_param_arr = config.sido_menu_param
 
 
 def crop_image(img):
@@ -43,23 +44,29 @@ wait.until(
     EC.presence_of_element_located((By.CSS_SELECTOR, "#iframe-content"))
 )
 
+
+max_length = len(menu_param_arr)
+
 # for params in config.nonsan_menu_param:
 # for params in config.gwangmyeong_menu_param:
 # for params in config.geumsan_menu_param:
-# for params in config.temp_param:
+# for idx, params in enumerate(config.temp_param, 1):
 # for params in config.gugun_menu_param:
 # for params in config.research_menu_param:
-for params in config.sido_menu_param:
+# for params in config.sido_menu_param:
+# for params in config.korea_menu_param:
+# for idx, params in enumerate(config.sido_menu_param, 1):
+for idx, params in enumerate(menu_param_arr, 1):
     driver.get(f'{config.target_login_url}{local}{config.target_menu_url}{params}')
-    print(f'[param:{params}] 태블로 화면 로딩 중')
+    print(f'({idx}/{max_length}) [param:{params}] 태블로 화면 로딩 중')
     # driver.implicitly_wait(10)
-    time.sleep(20)
+    time.sleep(15)
     # wait = WebDriverWait(driver, 5)
     # wait.until(
     #     EC.presence_of_element_located((By.CSS_SELECTOR, "#centeringContainer"))
     # )
 
-    print(f'[param:{params}] 캡쳐 중')
+    print(f'({idx}/{max_length}) [param:{params}] 캡쳐 중')
     img_binary = driver.get_screenshot_as_png()
     img = Image.open(BytesIO(img_binary))
     img = crop_image(img)
