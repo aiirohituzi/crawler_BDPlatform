@@ -11,8 +11,8 @@ import config
 # id, pw 값은 별개로 config.py 들어가서 일일히 직접 수정해주어야 함
 # 논산, 광명, 금산은 메뉴항목이 다르므로 우선순위 나중에
 # local 명칭으로 폴더 하나 만들어 줘야 함
-local = 'daegu'
-menu_param_arr = config.sido_menu_param
+local = 'dongducheon'
+menu_param_arr = config.temp_param
 
 
 def crop_image(img):
