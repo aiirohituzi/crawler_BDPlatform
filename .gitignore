@@ -4,6 +4,7 @@ chromedriver/
 *.xlsx
 config.py
 config_EW.py
+config_EW_Incheon.py
 nonsan/
 nonsan-6s/
 nonsan-7s/

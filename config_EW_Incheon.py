@@ -10,7 +10,9 @@ target_view_EW_urls = [
     'http://tableau.cretop.com/#/views/_EW_/05_EW?',
     'http://tableau.cretop.com/#/views/_EW_/06_EW?',
     'http://tableau.cretop.com/#/views/_EW_/07_EW?',
-    'http://tableau.cretop.com/#/views/_EW_/08_EW?'
+    'http://tableau.cretop.com/#/views/_EW_/08_EW?',
+    'http://tableau.cretop.com/#/views/_EW_/09_EW?',
+    'http://tableau.cretop.com/#/views/_EW_/'
 ]
 
 # 로그인 계정 정보
@@ -29,15 +31,20 @@ param_info = [
     {"year", "month", "gugun_cd", "ew_cd"},
 ]
 
-def get_params(index):
-    params = param_info[index]
-    result = []
+# def get_params(index):
+#     params = param_info[index]
+#     result = []
 
-    length = len(params)
-    for n in range(length):
-        # 
-        result.append
-    return param_info[index]
+#     length = len(params)
+#     for n in range(length):
+#         # 
+#         result.append
+#     return param_info[index]
+
+# 누락 화면 처리용
+temp = [
+    '01_EW?ew_cd=E3&field_cd=F',
+]
 
 # 시군구 코드
 gugun_cd = [
