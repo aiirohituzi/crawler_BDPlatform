@@ -7,8 +7,23 @@ from selenium.webdriver.common.by import By
 import time
 import config_EW_Incheon
 
-current_ew_index = 1
-capture_delay = 15
+# ==================================================
+# 대시보드 번호 (0번부터 시작)
+# 0 : 01
+# 1 : 02
+# 2 : 03
+# 3 : 04
+# 4 : 05
+# 5 : 06
+# 6 : 07
+# 7 : 08
+# 8 : 09
+# 9 : temp
+# 10 : 화성
+current_ew_index = 10
+# 화면 하나당 로딩 시간 (단위: 초)
+capture_delay = 10
+# ==================================================
 
 def crop_image(img):
     img_width, img_height = img.size
@@ -61,6 +76,9 @@ if current_ew_index == 8:
     max_length = len(config_EW_Incheon.gugun_cd) * len(config_EW_Incheon.field_cd)
 if current_ew_index == 9:
     max_length = len(config_EW_Incheon.temp)
+if current_ew_index == 10:
+    # max_length = len(config_EW_Incheon.ew_cd) * len(config_EW_Incheon.field_cd)
+    max_length = len(config_EW_Incheon.ew_cd)
     
 
 idx = 1
@@ -76,7 +94,7 @@ if current_ew_index == 0:
             img_binary = driver.get_screenshot_as_png()
             img = Image.open(BytesIO(img_binary))
             img = crop_image(img)
-            img.save(f'./_EW_/0{current_ew_index + 1}/0{current_ew_index + 1}_EW-{ew_cd}-{field}.png')
+            img.save(f'./_EW_/0{current_ew_index + 1}/0{current_ew_index + 2}_EW-{ew_cd}-{field}.png')
 
             idx += 1
 
@@ -227,7 +245,36 @@ if current_ew_index == 9:
         img = Image.open(BytesIO(img_binary))
         img = crop_image(img)
         img.save(f"./_EW_/{(temp.split('?')[0]).split('_')[0]}/{temp.split('?')[0]}{name}.png")
+        # img.save(f"./_EW_/hwaseong/{(temp.split('?')[0]).split('_')[0]}/{temp.split('?')[0]}{name}.png")
 
         idx += 1
 
+if current_ew_index == 10:          # 화성 분기 크롤링
+    for ew_cd in config_EW_Incheon.ew_cd:
+        # for field in config_EW_Incheon.field_cd:
+            # driver.get(f'{config_EW_Incheon.target_view_EW_urls[current_ew_index]}ew_cd={ew_cd}&field_cd={field}')
+        driver.get(f'{config_EW_Incheon.target_view_EW_urls[current_ew_index]}ew_cd={ew_cd}')
+        
+        # print(f'({idx}/{max_length}) [param:02-{ew_cd}-{field}] 태블로 화면 로딩 중')
+        # print(f'({idx}/{max_length}) [param:04-{ew_cd}-{field}] 태블로 화면 로딩 중')
+        # print(f'({idx}/{max_length}) [param:05-{ew_cd}] 태블로 화면 로딩 중')
+        print(f'({idx}/{max_length}) [param:06-{ew_cd}] 태블로 화면 로딩 중')
+
+        time.sleep(capture_delay)
+
+        # print(f'({idx}/{max_length}) [param:02-{ew_cd}-{field}] 캡쳐 중')
+        # print(f'({idx}/{max_length}) [param:04-{ew_cd}-{field}] 캡쳐 중')
+        # print(f'({idx}/{max_length}) [param:05-{ew_cd}] 캡쳐 중')
+        print(f'({idx}/{max_length}) [param:06-{ew_cd}] 캡쳐 중')
+
+        img_binary = driver.get_screenshot_as_png()
+        img = Image.open(BytesIO(img_binary))
+        img = crop_image(img)
+
+        # img.save(f'./_EW_/hwaseong/02/02_EW-{ew_cd}-{field}.png')
+        # img.save(f'./_EW_/hwaseong/04/04_EW-{ew_cd}-{field}.png')
+        # img.save(f'./_EW_/hwaseong/05/05_EW-{ew_cd}.png')
+        img.save(f'./_EW_/hwaseong/06/06_EW-{ew_cd}.png')
+
+        idx += 1
 driver.close()
